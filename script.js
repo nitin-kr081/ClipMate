@@ -9,7 +9,6 @@ textArea.addEventListener("focus", () => {
   textAreaFocused = true;
 });
 
-// COPY BUTTON
 copyBtn.addEventListener("click", async () => {
   if (textArea.value.trim() === "") {
     showStatus("Nothing to copy!");
@@ -24,7 +23,6 @@ copyBtn.addEventListener("click", async () => {
   }
 });
 
-// PASTE BUTTON
 pasteBtn.addEventListener("click", async () => {
   if (!textAreaFocused) {
     showStatus("Click in the textarea first!");
