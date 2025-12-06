@@ -10,7 +10,7 @@ textArea.addEventListener("focus", () => {
   textAreaFocused = true;
 });
 
-//Copy
+// Copy
 copyBtn.addEventListener("click", async () => {
   if (textArea.value.trim() === "") {
     showStatus("Nothing to copy!");
@@ -26,20 +26,26 @@ copyBtn.addEventListener("click", async () => {
   }
 });
 
-//Paste
-pasteBtn.addEventListener("click", () => {
+// Paste (updated to use real system clipboard)
+pasteBtn.addEventListener("click", async () => {
   if (!textAreaFocused) {
     showStatus("Click on the textarea first!");
     return;
   }
 
-  if (lastCopiedText === "") {
-    showStatus("Nothing copied yet!");
-    return;
-  }
+  try {
+    const text = await navigator.clipboard.readText();
 
-  textArea.value += lastCopiedText;
-  showStatus("Pasted!");
+    if (!text) {
+      showStatus("Clipboard is empty!");
+      return;
+    }
+
+    textArea.value += text;
+    showStatus("Pasted!");
+  } catch (err) {
+    showStatus("Paste failed! Browser may block clipboard access.");
+  }
 });
 
 function showStatus(message) {
