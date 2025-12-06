@@ -4,13 +4,12 @@ const pasteBtn = document.getElementById("pasteBtn");
 const status = document.getElementById("status");
 
 let textAreaFocused = false;
-let lastCopiedText = "";
 
 textArea.addEventListener("focus", () => {
   textAreaFocused = true;
 });
 
-// Copy
+// COPY BUTTON
 copyBtn.addEventListener("click", async () => {
   if (textArea.value.trim() === "") {
     showStatus("Nothing to copy!");
@@ -19,21 +18,24 @@ copyBtn.addEventListener("click", async () => {
 
   try {
     await navigator.clipboard.writeText(textArea.value);
-    lastCopiedText = textArea.value;
     showStatus("Copied!");
   } catch (err) {
     showStatus("Copy failed!");
   }
 });
 
-// Paste (updated to use real system clipboard)
+// PASTE BUTTON
 pasteBtn.addEventListener("click", async () => {
   if (!textAreaFocused) {
-    showStatus("Click on the textarea first!");
+    showStatus("Click in the textarea first!");
     return;
   }
 
   try {
+    if (navigator.permissions) {
+      await navigator.permissions.query({ name: "clipboard-read" });
+    }
+
     const text = await navigator.clipboard.readText();
 
     if (!text) {
@@ -44,7 +46,8 @@ pasteBtn.addEventListener("click", async () => {
     textArea.value += text;
     showStatus("Pasted!");
   } catch (err) {
-    showStatus("Paste failed! Browser may block clipboard access.");
+    showStatus("Paste blocked by browser!");
+    console.error("Paste error:", err);
   }
 });
 
